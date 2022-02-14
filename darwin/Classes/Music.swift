@@ -844,6 +844,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         //self.updateNotifStatus(playing: self.playing, stopped: false, rate: self.player?.rate)
     }
     
+    func realTimePosition() -> Int? {
+        if let p = self.player {
+            if let currentItem = p.currentItem {
+                return Int(getMillisecondsFromCMTime(currentItem.currentTime()))
+            }
+        }
+        return nil
+    }
+    
     private var looper: Any?
     
     func loopSingleAudio(loop: Bool) {
@@ -1454,7 +1463,27 @@ class Music : NSObject, FlutterPlugin {
                         networkHeaders: networkHeaders,
                         result: result
                 )
-                
+            case "get_real_time_position" :
+                guard let args = call.arguments as? NSDictionary else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments must be an NSDictionary",
+                        details: nil)
+                    )
+                    break
+                }
+                guard let id = args["id"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[id] must be a String",
+                        details: nil)
+                    )
+                    break
+                }
+                let position = self.getOrCreatePlayer(id: id)
+                    .realTimePosition()
+                result(position)
+
             default:
                 result(FlutterMethodNotImplemented)
                 break

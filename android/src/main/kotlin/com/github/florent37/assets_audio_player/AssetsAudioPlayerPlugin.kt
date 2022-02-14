@@ -551,6 +551,19 @@ class AssetsAudioPlayer(
                     return
                 }
             }
+            "get_real_time_position" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val position = getOrCreatePlayer(id).realTimePosition()
+                    result.success(position)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
             else -> result.notImplemented()
         }
     }

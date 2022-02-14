@@ -20,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
+import android.util.Log
 
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
@@ -531,6 +532,17 @@ class Player(
                 else -> { /* do nothing */ }
             }
         }
+    }
+
+    fun realTimePosition(): Int? {
+        if (mediaPlayer == null) {
+            return null
+        } else {
+            try {
+                return mediaPlayer!!.currentPositionMs.toInt()
+            } catch (t: Throwable){}
+        } 
+        return null
     }
 }
 
